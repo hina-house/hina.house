@@ -9,9 +9,6 @@
 >
 	<header>
 		<button v-if="!fixed" class="cancel _button" @click="cancel"><i class="fas fa-times"></i></button>
-		<button v-click-anime v-tooltip="i18n.ts.switchAccount" class="account _button" @click="openAccountMenu">
-			<MkAvatar :user="postAccount ?? $i" class="avatar"/>
-		</button>
 		<div class="right">
 			<span class="text-count" :class="{ over: textLength > maxTextLength }">{{ maxTextLength - textLength }}</span>
 			<span v-if="localOnly" class="local-only"><i class="fas fa-biohazard"></i></span>
@@ -22,7 +19,9 @@
 				<span v-if="visibility === 'specified'"><i class="fas fa-envelope"></i></span>
 			</button>
 			<button v-tooltip="i18n.ts.previewNoteText" class="_button preview" :class="{ active: showPreview }" @click="showPreview = !showPreview"><i class="fas fa-file-code"></i></button>
-			<button class="submit _buttonGradate" :disabled="!canPost" data-cy-open-post-form-submit @click="post">{{ submitText }}<i :class="reply ? 'fas fa-reply' : renote ? 'fas fa-quote-right' : 'fas fa-paper-plane'"></i></button>
+			<button v-click-anime v-tooltip="i18n.ts.switchAccount" class="account _button" @click="openAccountMenu">
+				<MkAvatar :user="postAccount ?? $i" class="avatar"/>
+			</button>
 		</div>
 	</header>
 	<div class="form" :class="{ fixed }">
@@ -46,13 +45,16 @@
 		<XPostFormAttaches class="attaches" :files="files" @updated="updateFiles" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName"/>
 		<XPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
 		<XNotePreview v-if="showPreview" class="preview" :text="text"/>
-		<footer>
-			<button v-tooltip="i18n.ts.attachFile" class="_button" @click="chooseFileFrom"><i class="fas fa-photo-video"></i></button>
-			<button v-tooltip="i18n.ts.poll" class="_button" :class="{ active: poll }" @click="togglePoll"><i class="fas fa-poll-h"></i></button>
-			<button v-tooltip="i18n.ts.useCw" class="_button" :class="{ active: useCw }" @click="useCw = !useCw"><i class="fas fa-eye-slash"></i></button>
-			<button v-tooltip="i18n.ts.emoji" class="_button" @click="insertEmoji"><i class="fas fa-laugh-squint"></i></button>
-			<button v-if="postFormActions.length > 0" v-tooltip="i18n.ts.plugin" class="_button" @click="showActions"><i class="fas fa-plug"></i></button>
-		</footer>
+		<div class="footer">
+			<footer>
+				<button v-tooltip="i18n.ts.attachFile" class="_button" @click="chooseFileFrom"><i class="fas fa-photo-video"></i></button>
+				<button v-tooltip="i18n.ts.poll" class="_button" :class="{ active: poll }" @click="togglePoll"><i class="fas fa-poll-h"></i></button>
+				<button v-tooltip="i18n.ts.useCw" class="_button" :class="{ active: useCw }" @click="useCw = !useCw"><i class="fas fa-eye-slash"></i></button>
+				<button v-tooltip="i18n.ts.emoji" class="_button" @click="insertEmoji"><i class="fas fa-laugh-squint"></i></button>
+				<button v-if="postFormActions.length > 0" v-tooltip="i18n.ts.plugin" class="_button" @click="showActions"><i class="fas fa-plug"></i></button>
+			</footer>
+			<button class="submit _buttonGradate" :disabled="!canPost" data-cy-open-post-form-submit @click="post">{{ submitText }}<i :class="reply ? 'fas fa-reply' : renote ? 'fas fa-quote-right' : 'fas fa-paper-plane'"></i></button>
+		</div>
 		<datalist id="hashtags">
 			<option v-for="hashtag in recentHashtags" :key="hashtag" :value="hashtag"/>
 		</datalist>
@@ -707,19 +709,6 @@ onMounted(() => {
 			line-height: 66px;
 		}
 
-		> .account {
-			height: 100%;
-			aspect-ratio: 1/1;
-			display: inline-flex;
-			vertical-align: bottom;
-
-			> .avatar {
-				width: 28px;
-				height: 28px;
-				margin: auto;
-			}
-		}
-
 		> .right {
 			position: absolute;
 			top: 0;
@@ -763,21 +752,17 @@ onMounted(() => {
 				}
 			}
 
-			> .submit {
-				margin: 16px 16px 16px 0;
-				padding: 0 12px;
-				line-height: 34px;
-				font-weight: bold;
-				vertical-align: bottom;
-				border-radius: 4px;
-				font-size: 0.9em;
+			> .account {
+				height: 100%;
+				aspect-ratio: 1/1;
+				display: inline-flex;
+				vertical-align: middle;
+				margin-right: 16px;
 
-				&:disabled {
-					opacity: 0.7;
-				}
-
-				> i {
-					margin-left: 6px;
+				> .avatar {
+					width: 28px;
+					height: 28px;
+					margin: auto;
 				}
 			}
 		}
@@ -886,24 +871,46 @@ onMounted(() => {
 			}
 		}
 
-		> footer {
+		> .footer {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
 			padding: 0 16px 16px 16px;
 
-			> button {
-				display: inline-block;
-				padding: 0;
-				margin: 0;
-				font-size: 16px;
-				width: 48px;
-				height: 48px;
-				border-radius: 6px;
+			> .submit {
+				padding: 0 12px;
+				line-height: 34px;
+				font-weight: bold;
+				vertical-align: bottom;
+				border-radius: 4px;
+				font-size: 0.9em;
 
-				&:hover {
-					background: var(--X5);
+				&:disabled {
+					opacity: 0.7;
 				}
 
-				&.active {
-					color: var(--accent);
+				> i {
+					margin-left: 6px;
+				}
+			}
+
+			> footer {
+				> button {
+					display: inline-block;
+					padding: 0;
+					margin: 0;
+					font-size: 16px;
+					width: 48px;
+					height: 48px;
+					border-radius: 6px;
+
+					&:hover {
+						background: var(--X5);
+					}
+
+					&.active {
+						color: var(--accent);
+					}
 				}
 			}
 		}
