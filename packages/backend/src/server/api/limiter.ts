@@ -22,7 +22,7 @@ export const limiter = (limitation: IEndpointMeta['limit'] & { key: NonNullable<
 	} else {
 		ok();
 	}
-
+	ok();
 	// Short-term limit
 	function min(): void {
 		const minIntervalLimiter = new Limiter({
