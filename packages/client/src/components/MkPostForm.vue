@@ -2,6 +2,7 @@
 <div
 	v-size="{ max: [310, 500] }" class="gafaadew"
 	:class="{ modal, _popup: modal }"
+	:style="{ marginTop }"
 	@dragover.stop="onDragover"
 	@dragenter="onDragenter"
 	@dragleave="onDragleave"
@@ -89,6 +90,19 @@ import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import { $i, getAccounts, openAccountMenu as openAccountMenu_ } from '@/account';
 import { uploadFile } from '@/scripts/upload';
+import { ref } from "vue"
+
+const marginTop = ref<string>("")
+
+adjustTopMargin()
+
+window.addEventListener("resize", () => {
+	adjustTopMargin()
+})
+
+function　adjustTopMargin()　{
+	marginTop.value = Math.max(16, document.body.clientHeight　- 512) + "px"
+}
 
 const modal = inject('modal');
 
@@ -864,7 +878,7 @@ onMounted(() => {
 		> .text {
 			max-width: 100%;
 			min-width: 100%;
-			min-height: 90px;
+			min-height: 256px;
 
 			&.withCw {
 				padding-top: 8px;
